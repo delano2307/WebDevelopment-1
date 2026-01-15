@@ -4,10 +4,11 @@ namespace App\Controllers;
 
 class HomeController
 {
-    public function home($vars = [])
+    public function home(): string
     {
-        // normally we don't want to echo from a controller method directly
-        // but rather load a view template
-        echo "Welcome home!";
+        ob_start();
+        require __DIR__ . '/../Views/home.php';
+        return ob_get_clean();
     }
+
 }
