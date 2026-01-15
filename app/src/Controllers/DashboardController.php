@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Repositories\UserRepository;
+use App\Repositories\WorkoutRepository;
 
 class DashboardController
 {
@@ -13,15 +14,23 @@ class DashboardController
             exit;
         }
 
-        $repo = new UserRepository();
-        $user = $repo->findById((int)$_SESSION['user_id']);
+        $userId = (int)$_SESSION['user_id'];
 
+        $userRepo = new UserRepository();
+        $user = $userRepo->findById($userId);
+
+        // Als user niet (meer) bestaat: session kill + terug naar login
         if (!$user) {
             session_destroy();
             header('Location: /login');
             exit;
         }
 
+        // ---- Workouts ophalen voor deze user ----
+        $workoutRepo = new WorkoutRepository();
+        $workouts = $workoutRepo->findLastFiveByUserId($userId);
+
+        // ---- View renderen met $user en $workouts ----
         ob_start();
         require __DIR__ . '/../Views/dashboard.php';
         return ob_get_clean();
