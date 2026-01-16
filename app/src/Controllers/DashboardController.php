@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Repositories\UserRepository;
 use App\Repositories\WorkoutRepository;
+use App\Repositories\ExerciseRepository;
 
 class DashboardController
 {
@@ -30,7 +31,11 @@ class DashboardController
         $workoutRepo = new WorkoutRepository();
         $workouts = $workoutRepo->findLastFiveByUserId($userId);
 
-        // ---- View renderen met $user en $workouts ----
+        // ---- Exercises ophalen (voor iedereen zichtbaar) ----
+        $exerciseRepo = new ExerciseRepository();
+        $exercises = $exerciseRepo->findAll();
+
+        // ---- View renderen ----
         ob_start();
         require __DIR__ . '/../Views/dashboard.php';
         return ob_get_clean();

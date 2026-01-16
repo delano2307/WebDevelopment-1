@@ -36,6 +36,15 @@ $dispatcher = simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET',  '/workouts/{id:\d+}/edit',   ['App\Controllers\WorkoutController', 'edit']);
     $r->addRoute('POST', '/workouts/{id:\d+}/update', ['App\Controllers\WorkoutController', 'update']);
 
+    $r->addRoute('GET',  '/exercises',                ['App\Controllers\ExerciseController', 'index']);
+
+    // Exercises (admin only)
+    $r->addRoute('GET',  '/exercises/create',         ['App\Controllers\ExerciseController', 'create']);
+    $r->addRoute('POST', '/exercises',                ['App\Controllers\ExerciseController', 'store']);
+    $r->addRoute('GET',  '/exercises/{id:\d+}/edit',  ['App\Controllers\ExerciseController', 'edit']);
+    $r->addRoute('POST', '/exercises/{id:\d+}/update',['App\Controllers\ExerciseController', 'update']);
+    $r->addRoute('POST', '/exercises/{id:\d+}/delete',['App\Controllers\ExerciseController', 'delete']);
+
 
 });
 
@@ -84,7 +93,7 @@ switch ($routeInfo[0]) {
         }
 
         // Pass dynamic route vars to controller method (e.g. ['name' => 'dan-the-man'])
-        $result = $controller->$method($vars);
+        $result = empty($vars) ? $controller->$method() : $controller->$method($vars);
 
         // If controller returns a string (HTML), echo it
         if (is_string($result)) {

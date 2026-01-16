@@ -53,16 +53,70 @@
           </div>
         </a>
       <?php endforeach; ?>
-      
+
       <?php if (!empty($workouts)): ?>
-          <div class="mt-3">
-            <a class="btn btn-outline-primary w-100" href="/workouts">
-              Bekijk alle workouts
-            </a>
-          </div>
-        <?php endif; ?>
+        <div class="mt-3">
+          <a class="btn btn-outline-primary w-100" href="/workouts">
+            Bekijk alle workouts
+          </a>
+        </div>
+      <?php endif; ?>
     </div>
   <?php endif; ?>
+
+  <!-- Exercises overzicht (nieuw) -->
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <h2 class="h5 mb-0">Oefeningen</h2>
+
+    <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+      <a class="btn btn-sm btn-outline-primary" href="/exercises/create">+ Nieuwe oefening</a>
+    <?php endif; ?>
+  </div>
+
+  <?php if (empty($exercises)): ?>
+    <div class="alert alert-info mt-3">Nog geen oefeningen.</div>
+  <?php else: ?>
+    <div class="table-responsive mt-3">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Naam</th>
+            <th>Spiergroep</th>
+            <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+              <th class="text-end">Acties</th>
+            <?php endif; ?>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($exercises as $e): ?>
+            <tr>
+              <td><?= htmlspecialchars($e['name']) ?></td>
+              <td><?= htmlspecialchars($e['muscle_group'] ?? '') ?></td>
+
+              <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+                <td class="text-end">
+                  <a class="btn btn-sm btn-outline-primary"
+                    href="/exercises/<?= (int)$e['id'] ?>/edit">Bewerk</a>
+
+                  <form method="post"
+                        action="/exercises/<?= (int)$e['id'] ?>/delete"
+                        class="d-inline"
+                        onsubmit="return confirm('Weet je zeker dat je deze oefening wilt verwijderen?');">
+                    <button class="btn btn-sm btn-outline-danger" type="submit">Verwijder</button>
+                  </form>
+                </td>
+              <?php endif; ?>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-2">
+      <a class="btn btn-outline-primary w-100" href="/exercises">Bekijk alle oefeningen</a>
+    </div>
+  <?php endif; ?>
+
 
   <hr class="my-4">
 
