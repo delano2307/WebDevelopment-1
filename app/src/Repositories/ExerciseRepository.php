@@ -16,11 +16,13 @@ class ExerciseRepository
 
     public function findAll(): array
     {
-        $stmt = $this->pdo->query(
+        $stmt = $this->pdo->prepare(
             "SELECT id, name, muscle_group
-             FROM exercises
-             ORDER BY name ASC"
+            FROM exercises
+            ORDER BY name ASC"
         );
+
+        $stmt->execute();
 
         return $stmt->fetchAll();
     }

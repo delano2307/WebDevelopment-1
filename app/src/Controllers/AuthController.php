@@ -35,6 +35,15 @@ class AuthController
             return;
         }
 
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
+        {
+            $error = "Ongeldig e-mailadres.";
+            ob_start();
+            require __DIR__ . '/../Views/login.php';
+            echo ob_get_clean();
+            return;
+        }
+
         $user = $this->users->findByEmail($email);
 
         if (!$user || !password_verify($password, $user['password_hash']))
@@ -70,6 +79,15 @@ class AuthController
 
         if ($name === '' || $email === '' || $password === '') {
             $error = 'Vul alle velden in.';
+            ob_start();
+            require __DIR__ . '/../Views/register.php';
+            echo ob_get_clean();
+            return;
+        }
+
+        if (mb_strlen($name) < 2 || mb_strlen($name) > 100) 
+        {
+            $error = 'Naam moet tussen 2 en 100 tekens zijn.';
             ob_start();
             require __DIR__ . '/../Views/register.php';
             echo ob_get_clean();
