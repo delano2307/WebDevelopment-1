@@ -9,6 +9,8 @@ use FastRoute\RouteCollector;
 use function FastRoute\simpleDispatcher;
 
 $dispatcher = simpleDispatcher(function (RouteCollector $r) {
+
+    //login & register
     $r->addRoute('GET', '/', ['App\Controllers\AuthController', 'showLogin']);
     
     $r->addRoute('GET',  '/login',    ['App\Controllers\AuthController', 'showLogin']);
@@ -18,32 +20,37 @@ $dispatcher = simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/logout',   ['App\Controllers\AuthController', 'logout']);
 
     $r->addRoute('GET',  '/dashboard',['App\Controllers\DashboardController', 'index']);
-    
+
+    //workouts
     $r->addRoute('GET',  '/workouts',         ['App\Controllers\WorkoutController', 'index']);
     $r->addRoute('GET',  '/workouts/create',  ['App\Controllers\WorkoutController', 'create']);
     $r->addRoute('POST', '/workouts',         ['App\Controllers\WorkoutController', 'store']);
     $r->addRoute('GET',  '/workouts/{id:\d+}',['App\Controllers\WorkoutController', 'show']);
 
-    $r->addRoute('POST', '/sets',            ['App\Controllers\SetController', 'store']);
-
-    $r->addRoute('GET',  '/sets/{id:\d+}/edit', ['App\Controllers\SetController', 'edit']);
-    $r->addRoute('POST', '/sets/{id:\d+}/update', ['App\Controllers\SetController', 'update']);
-    $r->addRoute('POST', '/sets/{id:\d+}/delete', ['App\Controllers\SetController', 'delete']);
-
     $r->addRoute('POST', '/workouts/{id:\d+}/delete', ['App\Controllers\WorkoutController', 'delete']);
-
     $r->addRoute('GET',  '/workouts/{id:\d+}/edit',   ['App\Controllers\WorkoutController', 'edit']);
     $r->addRoute('POST', '/workouts/{id:\d+}/update', ['App\Controllers\WorkoutController', 'update']);
 
-    $r->addRoute('GET',  '/exercises',                ['App\Controllers\ExerciseController', 'index']);
+    //sets
+    $r->addRoute('POST', '/sets', ['App\Controllers\SetController', 'store']);
 
-    // Exercises (admin only)
+    $r->addRoute('GET',  '/sets/{id:\d+}/edit',     ['App\Controllers\SetController', 'edit']);
+    $r->addRoute('POST', '/sets/{id:\d+}/update',   ['App\Controllers\SetController', 'update']);
+    $r->addRoute('POST', '/sets/{id:\d+}/delete',   ['App\Controllers\SetController', 'delete']);
+
+    //exercises
+    $r->addRoute('GET',  '/exercises', ['App\Controllers\ExerciseController', 'index']);
+
+    //exercises (admin only)
     $r->addRoute('GET',  '/exercises/create',         ['App\Controllers\ExerciseController', 'create']);
     $r->addRoute('POST', '/exercises',                ['App\Controllers\ExerciseController', 'store']);
     $r->addRoute('GET',  '/exercises/{id:\d+}/edit',  ['App\Controllers\ExerciseController', 'edit']);
     $r->addRoute('POST', '/exercises/{id:\d+}/update',['App\Controllers\ExerciseController', 'update']);
     $r->addRoute('POST', '/exercises/{id:\d+}/delete',['App\Controllers\ExerciseController', 'delete']);
 
+    //progress
+    $r->addRoute('GET',  '/progress',     ['App\Controllers\ProgressController', 'index']);
+    $r->addRoute('GET',  '/api/progress', ['App\Controllers\ApiController', 'progress']);   
 
 });
 

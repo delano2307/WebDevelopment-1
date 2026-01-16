@@ -16,7 +16,10 @@
       </div>
     </div>
 
-    <a class="btn btn-primary" href="/workouts/create">+ Nieuwe workout</a>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="/progress">Progressie</a>
+      <a class="btn btn-primary" href="/workouts/create">+ Nieuwe workout</a>
+    </div>
   </div>
 
   <!-- Workouts overzicht -->
