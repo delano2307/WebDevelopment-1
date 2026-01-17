@@ -20,7 +20,7 @@ class SetController
     }
 
     /**
-     * POST /sets (bestond al)
+     * POST /sets
      * Voeg een set toe (met ownership check).
      */
     public function store(): void
@@ -68,7 +68,7 @@ class SetController
             return;
         }
 
-        if ((int)$workout['user_id'] !== (int)$_SESSION['user_id']) {
+        if ((int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";
             return;
@@ -106,8 +106,8 @@ class SetController
         }
 
         // Ownership check via workout
-        $workout = $this->workouts->findById((int)$set['workout_id']);
-        if (!$workout || (int)$workout['user_id'] !== (int)$_SESSION['user_id']) {
+        $workout = $this->workouts->findById((int)$set->workoutId);
+        if (!$workout || (int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";
             exit;
@@ -115,7 +115,6 @@ class SetController
 
         $exercises = $this->exercises->findAll();
 
-        // View renderen
         ob_start();
         require __DIR__ . '/../Views/sets/edit.php';
         return ob_get_clean();
@@ -147,19 +146,17 @@ class SetController
         }
 
         // Ownership check via workout
-        $workout = $this->workouts->findById((int)$set['workout_id']);
-        if (!$workout || (int)$workout['user_id'] !== (int)$_SESSION['user_id']) {
+        $workout = $this->workouts->findById((int)$set->workoutId);
+        if (!$workout || (int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";
             return;
         }
 
-        // Input ophalen
         $exerciseId = (int)($_POST['exercise_id'] ?? 0);
         $reps       = (int)($_POST['reps'] ?? 0);
         $weightRaw  = $_POST['weight'] ?? null;
 
-        // Validatie
         if ($exerciseId <= 0) {
             http_response_code(400);
             echo "Oefening ontbreekt.";
@@ -183,11 +180,9 @@ class SetController
             return;
         }
 
-        // Update
         $this->sets->update($setId, $exerciseId, $reps, $weight);
 
-        // Terug naar workout detail
-        header("Location: /workouts/" . (int)$set['workout_id']);
+        header("Location: /workouts/" . (int)$set->workoutId);
         exit;
     }
 
@@ -216,14 +211,14 @@ class SetController
             return;
         }
 
-        $workout = $this->workouts->findById((int)$set['workout_id']);
-        if (!$workout || (int)$workout['user_id'] !== (int)$_SESSION['user_id']) {
+        $workout = $this->workouts->findById((int)$set->workoutId);
+        if (!$workout || (int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";
             return;
         }
 
-        $workoutId = (int)$set['workout_id'];
+        $workoutId = (int)$set->workoutId;
 
         $this->sets->delete($setId);
 

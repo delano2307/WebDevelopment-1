@@ -8,6 +8,17 @@ use App\Repositories\ExerciseRepository;
 
 class DashboardController
 {
+    private UserRepository $users;
+    private WorkoutRepository $workouts;
+    private ExerciseRepository $exercises;
+
+    public function __construct()
+    {
+        $this->users = new UserRepository();
+        $this->workouts = new WorkoutRepository();
+        $this->exercises = new ExerciseRepository();
+    }
+
     public function index(): string
     {
         if (empty($_SESSION['user_id'])) {
@@ -17,25 +28,17 @@ class DashboardController
 
         $userId = (int)$_SESSION['user_id'];
 
-        $userRepo = new UserRepository();
-        $user = $userRepo->findById($userId);
+        $user = $this->users->findById($userId);
 
-        // Als user niet (meer) bestaat: session kill + terug naar login
         if (!$user) {
             session_destroy();
             header('Location: /login');
             exit;
         }
 
-        // ---- Workouts ophalen voor deze user ----
-        $workoutRepo = new WorkoutRepository();
-        $workouts = $workoutRepo->findLastFiveByUserId($userId);
+        $workouts = $this->workouts->findLastFiveByUserId($userId);
+        $exercises = $this->exercises->findAll();
 
-        // ---- Exercises ophalen (voor iedereen zichtbaar) ----
-        $exerciseRepo = new ExerciseRepository();
-        $exercises = $exerciseRepo->findAll();
-
-        // ---- View renderen ----
         ob_start();
         require __DIR__ . '/../Views/dashboard.php';
         return ob_get_clean();

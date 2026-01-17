@@ -19,10 +19,8 @@ class WorkoutController
         $this->exercises = new ExerciseRepository();
     }
 
-
     public function index(): string
     {
-        // Auth check
         if (empty($_SESSION['user_id'])) {
             header('Location: /login');
             exit;
@@ -59,11 +57,9 @@ class WorkoutController
 
         $userId = (int)$_SESSION['user_id'];
 
-        // ---- Input ophalen ----
         $name = trim($_POST['name'] ?? '');
         $date = $_POST['date'] ?? date('Y-m-d');
 
-        // ---- Validatie ----
         if ($name === '' || strlen($name) > 100) {
             http_response_code(400);
             echo "Workout naam is verplicht (max 100 tekens).";
@@ -76,7 +72,6 @@ class WorkoutController
             return;
         }
 
-        // ---- Opslaan ----
         $newId = $this->workouts->create($userId, $name, $date);
 
         header("Location: /workouts/{$newId}");
@@ -106,7 +101,7 @@ class WorkoutController
 
         // Authorisatie: user mag alleen eigen workout zien
         $userId = (int)$_SESSION['user_id'];
-        if ((int)$workout['user_id'] !== $userId) {
+        if ((int)$workout->userId !== $userId) {
             http_response_code(403);
             echo "Geen toegang tot deze workout.";
             exit;
@@ -146,19 +141,15 @@ class WorkoutController
         }
 
         // Ownership check
-        if ((int)$workout['user_id'] !== (int)$_SESSION['user_id']) {
+        if ((int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";
             return;
         }
 
-        // Eerst sets verwijderen (als je geen FK cascade hebt)
         $this->workouts->deleteSetsByWorkoutId($workoutId);
-
-        // Daarna workout verwijderen
         $this->workouts->delete($workoutId);
 
-        // Terug naar workouts overzicht
         header("Location: /workouts");
         exit;
     }
@@ -189,7 +180,7 @@ class WorkoutController
         }
 
         // Ownership check
-        if ((int)$workout['user_id'] !== (int)$_SESSION['user_id']) {
+        if ((int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";
             exit;
@@ -199,7 +190,7 @@ class WorkoutController
         require __DIR__ . '/../Views/workouts/edit.php';
         return ob_get_clean();
     }
-    
+
     /**
      * POST /workouts/{id}/update
      * Verwerk edit-form.
@@ -226,17 +217,15 @@ class WorkoutController
         }
 
         // Ownership check
-        if ((int)$workout['user_id'] !== (int)$_SESSION['user_id']) {
+        if ((int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";
             return;
         }
 
-        // Input ophalen
         $name = trim($_POST['name'] ?? '');
         $date = $_POST['date'] ?? '';
 
-        // Validatie
         if ($name === '' || strlen($name) > 100) {
             http_response_code(400);
             echo "Workout naam is verplicht (max 100 tekens).";
@@ -249,13 +238,9 @@ class WorkoutController
             return;
         }
 
-        // Update uitvoeren
         $this->workouts->update($workoutId, $name, $date);
 
-        // Terug naar detailpagina
         header("Location: /workouts/{$workoutId}");
         exit;
     }
-
-
 }

@@ -117,8 +117,9 @@ class ExerciseController
         $error = $this->validate($name, $muscleGroup);
 
         if ($error !== null) {
-            $exercise['name'] = $name;
-            $exercise['muscle_group'] = $muscleGroup;
+            // Bij models met public properties: direct properties aanpassen
+            $exercise->name = $name;
+            $exercise->muscleGroup = $muscleGroup;
 
             ob_start();
             require __DIR__ . '/../Views/exercises/edit.php';

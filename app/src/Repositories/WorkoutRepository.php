@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Database;
+use App\Models\Workout;
 use PDO;
 
 class WorkoutRepository
@@ -11,16 +12,14 @@ class WorkoutRepository
 
     public function __construct()
     {
-        //connectie met database
         $this->pdo = Database::pdo();
     }
 
-    
     public function create(int $userId, string $name, string $date): int
     {
         $stmt = $this->pdo->prepare(
             "INSERT INTO workouts (user_id, name, date)
-            VALUES (:user_id, :name, :date)"
+             VALUES (:user_id, :name, :date)"
         );
 
         $stmt->execute([
@@ -32,6 +31,7 @@ class WorkoutRepository
         return (int)$this->pdo->lastInsertId();
     }
 
+    /** @return Workout[] */
     public function findAllByUserId(int $userId): array
     {
         $stmt = $this->pdo->prepare(
@@ -40,66 +40,88 @@ class WorkoutRepository
              WHERE user_id = :user_id
              ORDER BY date DESC, id DESC"
         );
-
         $stmt->execute([':user_id' => $userId]);
-        return $stmt->fetchAll();
+        $rows = $stmt->fetchAll();
+
+        $out = [];
+        foreach ($rows as $row) {
+            $w = new Workout();
+            $w->id = (int)$row['id'];
+            $w->name = (string)$row['name'];
+            $w->userId = (int)$row['user_id'];
+            $w->date = (string)$row['date'];
+            $w->createdAt = isset($row['created_at']) ? (string)$row['created_at'] : null;
+            $out[] = $w;
+        }
+        return $out;
     }
 
-    public function findById(int $id): ?array
+    public function findById(int $id): ?Workout
     {
         $stmt = $this->pdo->prepare(
             "SELECT id, name, user_id, date, created_at
              FROM workouts
              WHERE id = :id"
         );
-
         $stmt->execute([':id' => $id]);
-        $workout = $stmt->fetch();
+        $row = $stmt->fetch();
 
-        return $workout ?: null;
+        if (!$row) return null;
+
+        $w = new Workout();
+        $w->id = (int)$row['id'];
+        $w->name = (string)$row['name'];
+        $w->userId = (int)$row['user_id'];
+        $w->date = (string)$row['date'];
+        $w->createdAt = isset($row['created_at']) ? (string)$row['created_at'] : null;
+
+        return $w;
     }
 
+    /** @return Workout[] */
     public function findLastFiveByUserId(int $userId): array
     {
         $stmt = $this->pdo->prepare(
             "SELECT id, name, user_id, date, created_at
-            FROM workouts
-            WHERE user_id = :user_id
-            ORDER BY date DESC, id DESC
-            LIMIT 5"
+             FROM workouts
+             WHERE user_id = :user_id
+             ORDER BY date DESC, id DESC
+             LIMIT 5"
         );
-
         $stmt->execute([':user_id' => $userId]);
-        return $stmt->fetchAll();
+        $rows = $stmt->fetchAll();
+
+        $out = [];
+        foreach ($rows as $row) {
+            $w = new Workout();
+            $w->id = (int)$row['id'];
+            $w->name = (string)$row['name'];
+            $w->userId = (int)$row['user_id'];
+            $w->date = (string)$row['date'];
+            $w->createdAt = isset($row['created_at']) ? (string)$row['created_at'] : null;
+            $out[] = $w;
+        }
+        return $out;
     }
 
-    /**
-     * Verwijder alle sets van een workout (handig als je geen FK ON DELETE CASCADE hebt).
-     */
     public function deleteSetsByWorkoutId(int $workoutId): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM sets WHERE workout_id = :workout_id");
         $stmt->execute([':workout_id' => $workoutId]);
     }
 
-    /**
-     * Verwijder een workout.
-     */
     public function delete(int $workoutId): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM workouts WHERE id = :id");
         $stmt->execute([':id' => $workoutId]);
     }
 
-    /**
-     * Update workout naam en datum.
-     */
     public function update(int $id, string $name, string $date): void
     {
         $stmt = $this->pdo->prepare(
             "UPDATE workouts
-            SET name = :name, date = :date
-            WHERE id = :id"
+             SET name = :name, date = :date
+             WHERE id = :id"
         );
 
         $stmt->execute([
@@ -108,6 +130,4 @@ class WorkoutRepository
             ':date' => $date,
         ]);
     }
-
-
 }

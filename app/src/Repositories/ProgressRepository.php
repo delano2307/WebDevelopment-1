@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Database;
+use App\Models\ProgressPoint;
 use PDO;
 
 class ProgressRepository
@@ -14,10 +15,7 @@ class ProgressRepository
         $this->pdo = Database::pdo();
     }
 
-    /**
-     * Progressie = per workout-datum het maximum gewicht (kg) voor een exercise.
-     * Alleen data van de ingelogde user.
-     */
+    /** @return ProgressPoint[] */
     public function getProgressByExercise(int $userId, int $exerciseId): array
     {
         $stmt = $this->pdo->prepare("
@@ -35,6 +33,16 @@ class ProgressRepository
             ':exercise_id' => $exerciseId,
         ]);
 
-        return $stmt->fetchAll();
+        $rows = $stmt->fetchAll();
+
+        $out = [];
+        foreach ($rows as $row) {
+            $p = new ProgressPoint();
+            $p->date = (string)$row['date'];
+            $p->max_weight = (float)$row['max_weight'];
+            $out[] = $p;
+        }
+
+        return $out;
     }
 }

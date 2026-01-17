@@ -12,7 +12,7 @@
     <div>
       <h1 class="h3 mb-0">Dashboard</h1>
       <div class="text-muted">
-        Welkom<?= isset($user['name']) ? ', ' . htmlspecialchars($user['name']) : '' ?>!
+        Welkom<?= isset($user->name) ? ', ' . htmlspecialchars($user->name) : '' ?>!
       </div>
     </div>
 
@@ -33,23 +33,23 @@
     <div class="list-group">
       <?php foreach ($workouts as $w): ?>
         <a class="list-group-item list-group-item-action"
-           href="/workouts/<?= (int)$w['id'] ?>">
+           href="/workouts/<?= (int)$w->id ?>">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <div class="fw-semibold">
-                <?= htmlspecialchars($w['name']) ?>
+                <?= htmlspecialchars($w->name) ?>
               </div>
               <div class="text-muted small">
-                Aangemaakt: <?= htmlspecialchars($w['created_at']) ?>
+                Aangemaakt: <?= htmlspecialchars($w->createdAt) ?>
               </div>
             </div>
 
             <div class="text-end">
               <div class="fw-semibold">
-                <?= htmlspecialchars($w['date']) ?>
+                <?= htmlspecialchars($w->date) ?>
               </div>
               <div class="text-muted small">
-                #<?= (int)$w['id'] ?>
+                #<?= (int)$w->id ?>
               </div>
             </div>
 
@@ -93,16 +93,16 @@
         <tbody>
           <?php foreach ($exercises as $e): ?>
             <tr>
-              <td><?= htmlspecialchars($e['name']) ?></td>
-              <td><?= htmlspecialchars($e['muscle_group'] ?? '') ?></td>
+              <td><?= htmlspecialchars($e->name) ?></td>
+              <td><?= htmlspecialchars($e->muscleGroup ?? '') ?></td>
 
               <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
                 <td class="text-end">
                   <a class="btn btn-sm btn-outline-primary"
-                    href="/exercises/<?= (int)$e['id'] ?>/edit">Bewerk</a>
+                    href="/exercises/<?= (int)$e->id ?>/edit">Bewerk</a>
 
                   <form method="post"
-                        action="/exercises/<?= (int)$e['id'] ?>/delete"
+                        action="/exercises/<?= (int)$e->id ?>/delete"
                         class="d-inline"
                         onsubmit="return confirm('Weet je zeker dat je deze oefening wilt verwijderen?');">
                     <button class="btn btn-sm btn-outline-danger" type="submit">Verwijder</button>

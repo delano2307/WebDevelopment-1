@@ -46,7 +46,7 @@ class AuthController
 
         $user = $this->users->findByEmail($email);
 
-        if (!$user || !password_verify($password, $user['password_hash']))
+        if (!$user || !password_verify($password, (string)$user->passwordHash))
         {
             $error = 'Onjuiste login.';
             ob_start();
@@ -56,8 +56,8 @@ class AuthController
         }
 
         //V Sessie login V
-        $_SESSION['user_id'] = (int)$user['id'];
-        $_SESSION['role'] = $user['role'];
+        $_SESSION['user_id'] = (int)$user->id;
+        $_SESSION['role'] = (string)$user->role;
 
         $this->redirect('/dashboard');
 

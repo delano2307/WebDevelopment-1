@@ -16,19 +16,19 @@
 <?php endif; ?>
 
 <form method="post"
-      action="/exercises/<?= (int)$exercise['id'] ?>/update"
+      action="/exercises/<?= (int)$exercise->id ?>/update"
       class="card card-body">
 
   <div class="mb-3">
     <label class="form-label">Naam</label>
     <input class="form-control" name="name" required
-           value="<?= htmlspecialchars($exercise['name']) ?>">
+           value="<?= htmlspecialchars($exercise->name) ?>">
   </div>
 
   <div class="mb-3">
     <label class="form-label">Spiergroep</label>
     <input class="form-control" name="muscle_group"
-           value="<?= htmlspecialchars($exercise['muscle_group'] ?? '') ?>">
+           value="<?= htmlspecialchars($exercise->muscleGroup ?? '') ?>">
   </div>
 
   <button class="btn btn-primary">Opslaan</button>

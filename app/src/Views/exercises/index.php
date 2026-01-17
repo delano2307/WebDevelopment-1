@@ -33,16 +33,16 @@
     <tbody>
       <?php foreach ($exercises as $e): ?>
         <tr>
-          <td><?= htmlspecialchars($e['name']) ?></td>
-          <td><?= htmlspecialchars($e['muscle_group'] ?? '') ?></td>
+          <td><?= htmlspecialchars($e->name) ?></td>
+          <td><?= htmlspecialchars($e->muscleGroup ?? '') ?></td>
 
           <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
             <td class="text-end">
               <a class="btn btn-sm btn-outline-primary"
-                 href="/exercises/<?= (int)$e['id'] ?>/edit">Bewerk</a>
+                 href="/exercises/<?= (int)$e->id ?>/edit">Bewerk</a>
 
               <form method="post"
-                    action="/exercises/<?= (int)$e['id'] ?>/delete"
+                    action="/exercises/<?= (int)$e->id ?>/delete"
                     class="d-inline"
                     onsubmit="return confirm('Weet je zeker dat je deze oefening wilt verwijderen?');">
                 <button class="btn btn-sm btn-outline-danger" type="submit">Verwijder</button>

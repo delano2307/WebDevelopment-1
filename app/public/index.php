@@ -1,5 +1,4 @@
 <?php
- /* See the documentation for FastRoute for more information: https://github.com/nikic/FastRoute */
 
 session_start();
 

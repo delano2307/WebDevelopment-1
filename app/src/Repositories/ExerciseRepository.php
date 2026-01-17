@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Database;
+use App\Models\Exercise;
 use PDO;
 
 class ExerciseRepository
@@ -14,26 +15,48 @@ class ExerciseRepository
         $this->pdo = Database::pdo();
     }
 
+    /** @return Exercise[] */
     public function findAll(): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT id, name, muscle_group
-            FROM exercises
-            ORDER BY name ASC"
+            "SELECT id, name, muscle_group, created_at
+             FROM exercises
+             ORDER BY name ASC"
         );
-
         $stmt->execute();
+        $rows = $stmt->fetchAll();
 
-        return $stmt->fetchAll();
+        $out = [];
+        foreach ($rows as $row) {
+            $e = new Exercise();
+            $e->id = (int)$row['id'];
+            $e->name = (string)$row['name'];
+            $e->muscleGroup = isset($row['muscle_group']) ? (string)$row['muscle_group'] : null;
+            $e->createdAt = isset($row['created_at']) ? (string)$row['created_at'] : null;
+            $out[] = $e;
+        }
+        return $out;
     }
 
-    public function findById(int $id): ?array
+    public function findById(int $id): ?Exercise
     {
         $stmt = $this->pdo->prepare(
-            "SELECT id, name, muscle_group FROM exercises WHERE id = :id"
+            "SELECT id, name, muscle_group, created_at
+             FROM exercises
+             WHERE id = :id"
         );
         $stmt->execute([':id' => $id]);
-        return $stmt->fetch() ?: null;
+        $row = $stmt->fetch();
+
+        if (!$row) return null;
+
+        $e = new Exercise();
+        $e->id = (int)$row['id'];
+        $e->name = (string)$row['name'];
+        $e->muscleGroup = isset($row['muscle_group']) ? (string)$row['muscle_group'] : null;
+        $e->createdAt = isset($row['created_at']) ? (string)$row['created_at'] : null;
+
+        return $e;
     }
 
     public function create(string $name, string $muscleGroup): int
@@ -66,10 +89,7 @@ class ExerciseRepository
 
     public function delete(int $id): void
     {
-        $stmt = $this->pdo->prepare(
-            "DELETE FROM exercises WHERE id = :id"
-        );
+        $stmt = $this->pdo->prepare("DELETE FROM exercises WHERE id = :id");
         $stmt->execute([':id' => $id]);
     }
-
 }

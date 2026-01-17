@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Database;
+use App\Models\Set;
 use PDO;
 
 class SetRepository
@@ -29,6 +30,7 @@ class SetRepository
         ]);
     }
 
+    /** @return Set[] */
     public function findAllByWorkoutId(int $workoutId): array
     {
         $stmt = $this->pdo->prepare(
@@ -41,34 +43,50 @@ class SetRepository
         );
 
         $stmt->execute([':workout_id' => $workoutId]);
-        return $stmt->fetchAll();
+        $rows = $stmt->fetchAll();
+
+        $out = [];
+        foreach ($rows as $row) {
+            $s = new Set();
+            $s->id = (int)$row['id'];
+            $s->workoutId = (int)$row['workout_id'];
+            $s->exerciseId = (int)$row['exercise_id'];
+            $s->reps = (int)$row['reps'];
+            $s->weight = (float)$row['weight'];
+            $s->exerciseName = isset($row['exercise_name']) ? (string)$row['exercise_name'] : null;
+            $out[] = $s;
+        }
+        return $out;
     }
 
-    /**
-     * Vind één set op id (nodig voor edit + ownership check).
-     */
-    public function findById(int $id): ?array
+    public function findById(int $id): ?Set
     {
         $stmt = $this->pdo->prepare(
             "SELECT id, workout_id, exercise_id, reps, weight
-            FROM sets
-            WHERE id = :id"
+             FROM sets
+             WHERE id = :id"
         );
         $stmt->execute([':id' => $id]);
-        $set = $stmt->fetch();
+        $row = $stmt->fetch();
 
-        return $set ?: null;
+        if (!$row) return null;
+
+        $s = new Set();
+        $s->id = (int)$row['id'];
+        $s->workoutId = (int)$row['workout_id'];
+        $s->exerciseId = (int)$row['exercise_id'];
+        $s->reps = (int)$row['reps'];
+        $s->weight = (float)$row['weight'];
+
+        return $s;
     }
 
-    /**
-     * Update een set.
-     */
     public function update(int $id, int $exerciseId, int $reps, float $weight): void
     {
         $stmt = $this->pdo->prepare(
             "UPDATE sets
-            SET exercise_id = :exercise_id, reps = :reps, weight = :weight
-            WHERE id = :id"
+             SET exercise_id = :exercise_id, reps = :reps, weight = :weight
+             WHERE id = :id"
         );
 
         $stmt->execute([
@@ -79,13 +97,9 @@ class SetRepository
         ]);
     }
 
-    /**
-     * Delete een set.
-     */
     public function delete(int $id): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM sets WHERE id = :id");
         $stmt->execute([':id' => $id]);
     }
-
 }

@@ -12,20 +12,20 @@
 
         <!-- LINKS: titel + metadata onder elkaar -->
         <div>
-            <h1 class="h3 mb-1"><?= htmlspecialchars($workout['name']) ?></h1>
-            <div class="text-muted">Datum: <?= htmlspecialchars($workout['date']) ?></div>
-            <small class="text-muted">Workout #<?= (int)$workout['id'] ?></small>
+            <h1 class="h3 mb-1"><?= htmlspecialchars($workout->name) ?></h1>
+            <div class="text-muted">Datum: <?= htmlspecialchars($workout->date) ?></div>
+            <small class="text-muted">Workout #<?= (int)$workout->id ?></small>
         </div>
 
         <!-- RECHTS: knoppen naast elkaar -->
         <div class="d-flex align-items-center gap-2">
             <a class="btn btn-outline-primary"
-                href="/workouts/<?= (int)$workout['id'] ?>/edit">
+                href="/workouts/<?= (int)$workout->id ?>/edit">
                 Workout bewerken
             </a>
 
             <form method="post"
-                action="/workouts/<?= (int)$workout['id'] ?>/delete"
+                action="/workouts/<?= (int)$workout->id ?>/delete"
                 onsubmit="return confirm('Weet je zeker dat je deze workout wilt verwijderen? Alle sets worden ook verwijderd.');">
                 <button class="btn btn-outline-danger" type="submit">
                     Workout verwijderen
@@ -38,8 +38,6 @@
         </div>
 
     </div>
-
-
 
   <!-- Sets overzicht -->
   <div class="card p-3 mb-4">
@@ -61,15 +59,15 @@
           <tbody>
             <?php foreach ($sets as $s): ?>
               <tr>
-                <td><?= htmlspecialchars($s['exercise_name']) ?></td>
-                <td class="text-end"><?= (int)$s['reps'] ?></td>
-                <td class="text-end"><?= htmlspecialchars((string)$s['weight']) ?></td>
+                <td><?= htmlspecialchars($s->exerciseName ?? '') ?></td>
+                <td class="text-end"><?= (int)$s->reps ?></td>
+                <td class="text-end"><?= htmlspecialchars((string)$s->weight) ?></td>
                 <td class="text-end">
-                    <a class="btn btn-sm btn-outline-primary" href="/sets/<?= (int)$s['id'] ?>/edit">Bewerk</a>
+                    <a class="btn btn-sm btn-outline-primary" href="/sets/<?= (int)$s->id ?>/edit">Bewerk</a>
 
                     <form class="d-inline"
                             method="post"
-                            action="/sets/<?= (int)$s['id'] ?>/delete"
+                            action="/sets/<?= (int)$s->id ?>/delete"
                             onsubmit="return confirm('Set verwijderen?');">
                         <button class="btn btn-sm btn-outline-danger" type="submit">Verwijder</button>
                     </form>
@@ -94,14 +92,14 @@
     <?php else: ?>
       <form class="row g-2" method="post" action="/sets">
         <!-- Verplicht: set koppelen aan juiste workout -->
-        <input type="hidden" name="workout_id" value="<?= (int)$workout['id'] ?>">
+        <input type="hidden" name="workout_id" value="<?= (int)$workout->id ?>">
 
         <div class="col-12 col-md-6">
           <label class="form-label">Oefening</label>
           <select class="form-select" name="exercise_id" required>
             <option value="">Kies oefening...</option>
             <?php foreach ($exercises as $ex): ?>
-              <option value="<?= (int)$ex['id'] ?>"><?= htmlspecialchars($ex['name']) ?></option>
+              <option value="<?= (int)$ex->id ?>"><?= htmlspecialchars($ex->name) ?></option>
             <?php endforeach; ?>
           </select>
         </div>

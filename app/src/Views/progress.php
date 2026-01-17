@@ -36,8 +36,8 @@
       <label class="form-label" for="exerciseSelect">Kies oefening</label>
       <select id="exerciseSelect" class="form-select">
         <?php foreach ($exercises as $e): ?>
-          <option value="<?= (int)$e['id'] ?>">
-            <?= htmlspecialchars($e['name']) ?>
+          <option value="<?= (int)$e->id ?>">
+            <?= htmlspecialchars($e->name) ?>
           </option>
         <?php endforeach; ?>
       </select>

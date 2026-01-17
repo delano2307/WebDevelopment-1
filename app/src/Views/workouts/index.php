@@ -23,12 +23,12 @@
     <div class="list-group">
       <?php foreach ($workouts as $w): ?>
         <a class="list-group-item list-group-item-action"
-           href="/workouts/<?= (int)$w['id'] ?>">
+           href="/workouts/<?= (int)$w->id ?>">
           <div class="d-flex justify-content-between">
-            <strong><?= htmlspecialchars($w['name']) ?></strong>
-            <div class="text-muted"><?= htmlspecialchars($w['date']) ?></div>
+            <strong><?= htmlspecialchars($w->name) ?></strong>
+            <div class="text-muted"><?= htmlspecialchars($w->date) ?></div>
           </div>
-          <small class="text-muted">Aangemaakt: <?= htmlspecialchars($w['created_at']) ?></small>
+          <small class="text-muted">Aangemaakt: <?= htmlspecialchars($w->createdAt) ?></small>
         </a>
       <?php endforeach; ?>
     </div>
