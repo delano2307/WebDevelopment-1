@@ -31,7 +31,6 @@ class WorkoutRepository
         return (int)$this->pdo->lastInsertId();
     }
 
-    /** @return Workout[] */
     public function findAllByUserId(int $userId): array
     {
         $stmt = $this->pdo->prepare(
@@ -78,7 +77,6 @@ class WorkoutRepository
         return $w;
     }
 
-    /** @return Workout[] */
     public function findLastFiveByUserId(int $userId): array
     {
         $stmt = $this->pdo->prepare(

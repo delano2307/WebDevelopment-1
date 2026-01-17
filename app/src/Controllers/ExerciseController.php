@@ -32,7 +32,6 @@ class ExerciseController
         }
     }
 
-    // ✅ Iedereen die ingelogd is: lijst bekijken
     public function index(): string
     {
         $this->requireAuth();
@@ -44,7 +43,6 @@ class ExerciseController
         return ob_get_clean();
     }
 
-    // 🔒 Admin-only: create
     public function create(): string
     {
         $this->requireAdmin();
@@ -79,7 +77,6 @@ class ExerciseController
         exit;
     }
 
-    // 🔒 Admin-only: edit/update/delete
     public function edit(array $vars): string
     {
         $this->requireAdmin();
@@ -117,7 +114,6 @@ class ExerciseController
         $error = $this->validate($name, $muscleGroup);
 
         if ($error !== null) {
-            // Bij models met public properties: direct properties aanpassen
             $exercise->name = $name;
             $exercise->muscleGroup = $muscleGroup;
 
@@ -162,5 +158,21 @@ class ExerciseController
         }
 
         return null;
+    }
+
+    public function findById(int $id): ?object
+    {
+        $stmt = $this->pdo->prepare("SELECT id, name, muscle_group FROM exercises WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+
+        if (!$row) return null;
+
+
+        return (object)[
+            'id' => (int)$row['id'],
+            'name' => (string)$row['name'],
+            'muscleGroup' => (string)$row['muscle_group'],
+        ];
     }
 }

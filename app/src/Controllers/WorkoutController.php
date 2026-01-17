@@ -115,10 +115,6 @@ class WorkoutController
         return ob_get_clean();
     }
 
-    /**
-     * POST /workouts/{id}/delete
-     * Verwijder een workout + alle sets die erbij horen (ownership check).
-     */
     public function delete(array $vars): void
     {
         if (empty($_SESSION['user_id'])) {
@@ -140,7 +136,6 @@ class WorkoutController
             return;
         }
 
-        // Ownership check
         if ((int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";
@@ -154,10 +149,7 @@ class WorkoutController
         exit;
     }
 
-    /**
-     * GET /workouts/{id}/edit
-     * Toon formulier om workout te bewerken.
-     */
+
     public function edit(array $vars): string
     {
         if (empty($_SESSION['user_id'])) {
@@ -179,7 +171,6 @@ class WorkoutController
             exit;
         }
 
-        // Ownership check
         if ((int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";
@@ -191,10 +182,7 @@ class WorkoutController
         return ob_get_clean();
     }
 
-    /**
-     * POST /workouts/{id}/update
-     * Verwerk edit-form.
-     */
+
     public function update(array $vars): void
     {
         if (empty($_SESSION['user_id'])) {
@@ -216,7 +204,6 @@ class WorkoutController
             return;
         }
 
-        // Ownership check
         if ((int)$workout->userId !== (int)$_SESSION['user_id']) {
             http_response_code(403);
             echo "Geen toegang.";

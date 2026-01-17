@@ -9,5 +9,4 @@ class Set
     public int $exerciseId;
     public int $reps;
     public float $weight;
-    public ?string $exerciseName = null;
 }

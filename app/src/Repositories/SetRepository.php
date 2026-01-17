@@ -30,7 +30,6 @@ class SetRepository
         ]);
     }
 
-    /** @return Set[] */
     public function findAllByWorkoutId(int $workoutId): array
     {
         $stmt = $this->pdo->prepare(
@@ -101,5 +100,22 @@ class SetRepository
     {
         $stmt = $this->pdo->prepare("DELETE FROM sets WHERE id = :id");
         $stmt->execute([':id' => $id]);
+    }
+
+    public function findLastLoggedExerciseIdByUserId(int $userId): ?int
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT s.exercise_id
+             FROM sets s
+             JOIN workouts w ON w.id = s.workout_id
+             WHERE w.user_id = :user_id
+             ORDER BY w.date DESC, s.id DESC
+             LIMIT 1"
+        );
+
+        $stmt->execute([':user_id' => $userId]);
+        $val = $stmt->fetchColumn();
+
+        return $val !== false ? (int)$val : null;
     }
 }

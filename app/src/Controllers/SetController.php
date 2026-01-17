@@ -21,7 +21,7 @@ class SetController
 
     /**
      * POST /sets
-     * Voeg een set toe (met ownership check).
+     * Voeg één of meerdere sets toe (met ownership check).
      */
     public function store(): void
     {
@@ -32,31 +32,18 @@ class SetController
 
         $workoutId  = (int)($_POST['workout_id'] ?? 0);
         $exerciseId = (int)($_POST['exercise_id'] ?? 0);
-        $reps       = (int)($_POST['reps'] ?? 0);
-        $weightRaw  = $_POST['weight'] ?? null;
+
+        // Kan single zijn (string) of multi (array)
+        $repsInput   = $_POST['reps'] ?? [];
+        $weightInput = $_POST['weight'] ?? [];
+
+        // Maak er altijd arrays van (werkt ook als je nog single inputs hebt)
+        $repsArr   = is_array($repsInput) ? $repsInput : [$repsInput];
+        $weightArr = is_array($weightInput) ? $weightInput : [$weightInput];
 
         if ($workoutId <= 0 || $exerciseId <= 0) {
             http_response_code(400);
             echo "Workout of oefening ontbreekt.";
-            return;
-        }
-
-        if ($reps <= 0 || $reps > 200) {
-            http_response_code(400);
-            echo "Reps moeten tussen 1 en 200 zijn.";
-            return;
-        }
-
-        if ($weightRaw === null || !is_numeric($weightRaw)) {
-            http_response_code(400);
-            echo "Gewicht is ongeldig.";
-            return;
-        }
-
-        $weight = (float)$weightRaw;
-        if ($weight < 0 || $weight > 999.99) {
-            http_response_code(400);
-            echo "Gewicht buiten bereik.";
             return;
         }
 
@@ -74,11 +61,65 @@ class SetController
             return;
         }
 
-        $this->sets->create($workoutId, $exerciseId, $reps, $weight);
+        $createdCount = 0;
+
+        // Loop over alle rijen
+        $max = max(count($repsArr), count($weightArr));
+        for ($i = 0; $i < $max; $i++) {
+
+            $repsRaw = trim((string)($repsArr[$i] ?? ''));
+            $wRaw    = trim((string)($weightArr[$i] ?? ''));
+
+            // Lege rij? skip (handig als user extra rij toevoegt en leeg laat)
+            if ($repsRaw === '' || $wRaw === '') {
+                continue;
+            }
+
+            // Reps validatie
+            if (!ctype_digit($repsRaw)) {
+                http_response_code(400);
+                echo "Reps moeten een heel getal zijn.";
+                return;
+            }
+
+            $reps = (int)$repsRaw;
+            if ($reps <= 0 || $reps > 200) {
+                http_response_code(400);
+                echo "Reps moeten tussen 1 en 200 zijn.";
+                return;
+            }
+
+            // Gewicht validatie (komma -> punt voor NL invoer)
+            $wRaw = str_replace(',', '.', $wRaw);
+
+            if (!is_numeric($wRaw)) {
+                http_response_code(400);
+                echo "Gewicht is ongeldig.";
+                return;
+            }
+
+            $weight = (float)$wRaw;
+            if ($weight < 0 || $weight > 999.99) {
+                http_response_code(400);
+                echo "Gewicht buiten bereik.";
+                return;
+            }
+
+            // Opslaan
+            $this->sets->create($workoutId, $exerciseId, $reps, $weight);
+            $createdCount++;
+        }
+
+        if ($createdCount === 0) {
+            http_response_code(400);
+            echo "Geen geldige sets om op te slaan.";
+            return;
+        }
 
         header("Location: /workouts/{$workoutId}");
         exit;
     }
+
 
     /**
      * GET /sets/{id}/edit

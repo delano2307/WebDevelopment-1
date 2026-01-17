@@ -15,7 +15,6 @@ class ProgressRepository
         $this->pdo = Database::pdo();
     }
 
-    /** @return ProgressPoint[] */
     public function getProgressByExercise(int $userId, int $exerciseId): array
     {
         $stmt = $this->pdo->prepare("

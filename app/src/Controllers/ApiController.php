@@ -8,7 +8,6 @@ class ApiController
 {
     public function progress(): void
     {
-        // Auth check (zelfde stijl als DashboardController)
         if (empty($_SESSION['user_id'])) {
             http_response_code(401);
             header('Content-Type: application/json');

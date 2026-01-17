@@ -15,7 +15,6 @@ class ExerciseRepository
         $this->pdo = Database::pdo();
     }
 
-    /** @return Exercise[] */
     public function findAll(): array
     {
         $stmt = $this->pdo->prepare(

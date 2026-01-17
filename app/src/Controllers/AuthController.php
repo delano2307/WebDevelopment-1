@@ -55,7 +55,6 @@ class AuthController
             return;
         }
 
-        //V Sessie login V
         $_SESSION['user_id'] = (int)$user->id;
         $_SESSION['role'] = (string)$user->role;
 
@@ -121,7 +120,6 @@ class AuthController
         $hash = password_hash($password, PASSWORD_DEFAULT);
         $userId = $this->users->create($name, $email, $hash);
 
-        // Auto-login na register
         $_SESSION['user_id'] = $userId;
         $_SESSION['role'] = 'user';
 
@@ -137,7 +135,6 @@ class AuthController
 
     private function redirect(string $path): void
     {
-        // Maak output buffers leeg zodat headers altijd geldig blijven
         while (ob_get_level() > 0) {
             ob_end_clean();
         }

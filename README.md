@@ -1,65 +1,71 @@
-# Docker template for PHP projects
-This repository provides a starting template for PHP application development.
+# Fitness Tracker – Web Development 1
 
-It contains:
-* NGINX webserver
-* PHP FastCGI Process Manager with PDO MySQL support
-* MariaDB (GPL MySQL fork)
-* PHPMyAdmin
-* Composer
-* Composer package [nikic/fast-route](https://github.com/nikic/FastRoute) for routing
+## URL
+Wanneer je naar 'localhost' gaat in je browser, zal je automatisch op de inlogpagina komen.
 
-## Setup
+---
 
-1. Install Docker Desktop on Windows or Mac, or Docker Engine on Linux.
-1. Clone the project
+## Logingegevens
 
-## Usage
+### Admin
+- E-mail: admin@admin.nl  
+- Wachtwoord: admintest 
 
-In a terminal, from the cloned project folder, run:
-```bash
-docker compose up
-```
+### Gebruiker
+- E-mail: gymbro@gmail.com
+- Wachtwoord: gymbro1234 
 
-### Composer Autoload
+- Gebruikers kunnen zelf een account registreren via de applicatie.
 
-This template is configured to use Composer for PSR-4 autoloading:
+---
 
-- Namespace `App\\` is mapped to `app/src/`.
+## ▶Applicatie starten
 
-To install dependencies and generate the autoloader, run:
+### Benodigd
+- Visual studio code (of een andere code editor)
+- Docker
 
-```bash
-docker compose run --rm php composer install
-```
-
-If you add new classes or change namespaces, regenerate the autoloader:
-
-```bash
-docker compose run --rm php composer dump-autoload
-```
-
-Example usage is wired in `app/public/index.php` and a sample class exists at `app/src/hello.php`.
-
-### NGINX
-
-NGINX will now serve files in the app/public folder.
-
-Go to [http://localhost/hello.php](http://localhost/hello.php). You should see a hello world message.
-
-### PHPMyAdmin
-
-PHPMyAdmin provides basic database administration. It is accessible at [localhost:8080](localhost:8080).
-
-Credentials are defined in `docker-compose.yml`. They are: developer/secret123
+### Installatie
+1. Download of unzip het project
+2. Open het project in code editor
+3. Open docker
+4. Voer de command 'docker compose up' uit in je terminal (ervanuit gaande dat je vscode gebruikt)
+5. Ga naar 'localhost' in je browser
 
 
-### Stopping the docker container
+---
 
-If you want to stop the containers, press Ctrl+C. 
+## Functionaliteit (overzicht)
+- Registreren, inloggen en uitloggen
+- Workouts en sets loggen (reps en gewicht)
+- Progressie per oefening bekijken
+- Admin kan oefeningen beheren
 
-Or run:
-```bash
-docker compose down
-```
+---
+
+## Architectuur
+- Gebouwd in PHP volgens het MVC-design pattern
+- Gebruik van meerdere gerelateerde database-tabellen
+- Authenticatie en autorisatie via sessions
+- CRUD-functionaliteit voor kern-entiteiten
+
+---
+
+## API & JavaScript
+- JSON API endpoint voor progressiedata
+- JavaScript (`fetch`) wordt gebruikt om data dynamisch te laden zonder pagina refresh
+
+---
+
+## Security
+- PDO prepared statements tegen SQL-injectie
+- Output escaping tegen XSS
+- Wachtwoorden worden gehasht opgeslagen
+- Routes zijn beschermd met authenticatie en rollen
+
+---
+
+## Legal & Accessibility
+- Basis WCAG-richtlijnen toegepast (labels, contrast)
+- Persoonsgegevens worden alleen gebruikt voor de functionaliteit van de applicatie
 

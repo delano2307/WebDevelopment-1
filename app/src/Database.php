@@ -11,20 +11,20 @@ class Database
     public static function pdo(): PDO
     {
         if (self::$pdo === null) {
-            // Docker service name
+            //Docker service name
             $host = 'mysql';
 
-            // Database naam uit docker-compose
+            //Database naam uit docker-compose
             $db = 'developmentdb';
 
-            // Gebruiker uit docker-compose
+            //Gebruiker uit docker-compose
             $user = 'developer';
             $pass = 'secret123';
 
-            // Charset expliciet definiëren
+            //Charset expliciet definiëren
             $charset = 'utf8mb4';
 
-            // DSN opbouwen
+            //DSN opbouwen
             $dsn = "mysql:host={$host};dbname={$db};charset={$charset}";
 
             self::$pdo = new PDO($dsn, $user, $pass, [

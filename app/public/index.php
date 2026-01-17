@@ -53,22 +53,17 @@ $dispatcher = simpleDispatcher(function (RouteCollector $r) {
 
 });
 
-/**
- * Get the request method and URI from the server variables and invoke the dispatcher.
- */
+
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = strtok($_SERVER['REQUEST_URI'], '?');
 
-// Optional: treat /index.php as /
 if ($uri === '/index.php') {
     $uri = '/';
 }
 
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
-/**
- * Switch on the dispatcher result and call the appropriate controller method if found.
- */
+
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
         http_response_code(404);
@@ -81,7 +76,6 @@ switch ($routeInfo[0]) {
         break;
 
     case FastRoute\Dispatcher::FOUND:
-        // $routeInfo[1] is the handler we provided in addRoute: [ControllerClass, methodName]
         $handler = $routeInfo[1];
         $vars = $routeInfo[2] ?? [];
 
@@ -97,10 +91,8 @@ switch ($routeInfo[0]) {
             throw new RuntimeException("Method not found: {$controllerClass}::{$method}");
         }
 
-        // Pass dynamic route vars to controller method (e.g. ['name' => 'dan-the-man'])
         $result = empty($vars) ? $controller->$method() : $controller->$method($vars);
 
-        // If controller returns a string (HTML), echo it
         if (is_string($result)) {
             echo $result;
         }
